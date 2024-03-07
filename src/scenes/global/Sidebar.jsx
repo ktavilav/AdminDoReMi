@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+
+import PianoIcon from "@mui/icons-material/PianoOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
@@ -80,7 +82,7 @@ const Sidebar = () => {
                 ml="15px"
               >
                 <Typography variant="h3" color={colors.grey[100]}>
-                  ADMIN
+                  Admin DoReMi
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
@@ -88,7 +90,7 @@ const Sidebar = () => {
               </Box>
             )}
           </MenuItem>
-
+{/* 
           {!isCollapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
@@ -115,7 +117,7 @@ const Sidebar = () => {
               </Box>
             </Box>
           )}
-
+*/}
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Item
               title="Dashboard"
@@ -130,15 +132,16 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Data
+              Instrumentos
             </Typography>
             <Item
-              title="Manage Team"
-              to="/team"
-              icon={<PeopleOutlinedIcon />}
+              title="Gestionar Instrumentos"
+              to="/instruments"
+              icon={<PianoIcon />}
               selected={selected}
               setSelected={setSelected}
             />
+            {/* 
             <Item
               title="Contacts Information"
               to="/contacts"
@@ -218,6 +221,7 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+            */}
           </Box>
         </Menu>
       </ProSidebar>
