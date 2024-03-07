@@ -300,7 +300,6 @@ const instrumentSchema = yup.object().shape({
 const initialValues = {
   nombre: '',
   imagen: [],
-  // Otros campos iniciales
 };
 
 export default InstrumentForm;
