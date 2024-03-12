@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 
 import Topbar from "./scenes/global/Topbar";
@@ -7,6 +7,7 @@ import Dashboard from "./scenes/dashboard";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import InstrumentList from "./scenes/instruments/InstrumentList";
+import InstrumentForm from "./scenes/instruments/InstrumentForm";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -37,6 +38,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/instruments" element={<InstrumentList />} />
+                <Route path="/instrument/:id" element={<InstrumentForm />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </main>
           </div>

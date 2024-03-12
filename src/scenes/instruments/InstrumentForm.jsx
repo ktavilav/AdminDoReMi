@@ -1,5 +1,6 @@
 // InstrumentForm.js
 import React, { useState, useEffect } from 'react';
+
 import { Box, Button, TextField, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { Formik, FieldArray } from 'formik';
 import * as yup from 'yup';
@@ -8,7 +9,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Header from '../../components/Header';
 
-const InstrumentForm = ({ onSubmit, instrumento }) => {
+const InstrumentForm = ({ onSubmit, instrumento, onCancel }) => {
   const isNonMobile = useMediaQuery('(min-width:600px)');
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [showImageDialog, setShowImageDialog] = useState(false);
@@ -17,6 +18,10 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
   const [categories, setCategories] = useState([]);
   const [instrumentDescription, setInstrumentDescription] = useState('');
 
+  const resetFormValues = (setFieldValue) => {
+    setFieldValue('imagen', []);
+  };
+  
   useEffect(() => {
     // Obtener la lista de categorías del backend al montar el componente
     const fetchCategories = async () => {
@@ -52,13 +57,16 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
     // Puedes actualizar el estado de Formik aquí si es necesario
   };
 
-
   return (
     <Box m="20px">
       <Header title={`${instrumento ? 'EDITAR' : 'AGREGAR'} INSTRUMENTO`} subtitle={`${instrumento ? 'Editar un' : 'Agregar un nuevo'} Instrumento`} />
 
       <Formik
-        onSubmit={onSubmit}
+        onSubmit={(values, actions) => {
+          onSubmit(values);
+          resetFormValues(actions.setFieldValue);
+          actions.resetForm();
+        }}
         initialValues={instrumento ? { ...instrumento } : initialValues}
         validationSchema={instrumentSchema}
       >
@@ -72,6 +80,15 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
           setFieldValue,
         }) => (
           <form onSubmit={handleSubmit}>
+            <Box display="flex" justifyContent="end" mt="20px">
+              <Button onClick={onCancel} color="secondary">
+                Volver
+              </Button>
+              <Button type="submit" color="secondary" variant="contained">
+                {instrumento ? 'Guardar Cambios' : 'Agregar Instrumento'}
+              </Button>              
+            </Box>
+
             <Box
               display="grid"
               gap="30px"
@@ -87,10 +104,10 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                 label="Categoría"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.category}
-                name="category"
-                error={!!touched.category && !!errors.category}
-                helperText={touched.category && errors.category}
+                value={values.categoria.categoria_id}
+                name="categoria"
+                error={!!touched.categoria && !!errors.categoria}
+                helperText={touched.categoria && errors.categoria}
                 sx={{ gridColumn: 'span 4' }}
               >
                 {categories.map((category) => (
@@ -99,7 +116,19 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                   </option>
                 ))}
               </TextField>
-
+              <TextField
+                fullWidth
+                variant="filled"
+                type="number"
+                label="Precio"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.precioDia}
+                name="precioDia"
+                error={!!touched.precioDia && !!errors.precioDia}
+                helperText={touched.precioDia && errors.precioDia}
+                sx={{ gridColumn: 'span 4' }}
+              />
               <TextField
                 fullWidth
                 variant="filled"
@@ -178,7 +207,7 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                     {values.imagen.length < 5 && (
                       <Button
                         type="button"
-                        color="primary"
+                        color="secondary"
                         onClick={() => arrayHelpers.push({ url: '', title: '' })}
                         startIcon={<PhotoCameraIcon />}
                       >
@@ -205,7 +234,7 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                           style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
                           onClick={() => openImageDialog(index)}
                         />
-                        <IconButton onClick={() => arrayHelpers.remove(index)}>
+                        <IconButton onClick={() => arrayHelpers.remove(index)} color='secondary'>
                           <DeleteIcon />
                         </IconButton>
                       </Box>
@@ -229,8 +258,8 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                           }}
                         />
                         <label htmlFor="image-upload">
-                          <Button component="span" variant="outlined">
-                            <PhotoCameraIcon />
+                          <Button component="span" variant="outlined" color='secondary'>
+                            <PhotoCameraIcon color='secondary'/>
                             Agregar Imagen
                           </Button>
                         </label>
@@ -250,7 +279,7 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                       />
                       {/* Botón para eliminar la imagen */}
-                      <Button onClick={() => handleRemoveImage(index)}>
+                      <Button onClick={() => handleRemoveImage(index)} color='secondary'>
                         Eliminar
                       </Button>
                     </div>
@@ -258,11 +287,6 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
               </Box>
             </Box>
 
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                {instrumento ? 'Guardar Cambios' : 'Agregar Instrumento'}
-              </Button>
-            </Box>
           </form>
         )}
       </Formik>
