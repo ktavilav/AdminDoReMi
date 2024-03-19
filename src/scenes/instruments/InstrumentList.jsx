@@ -1,9 +1,9 @@
-  // InstrumentList.js
   import React, { useState, useEffect } from 'react';
   import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
   import { DataGrid, GridToolbar } from '@mui/x-data-grid';
   import InstrumentForm from './InstrumentForm';
   import { useTheme } from '@mui/material';
+  import NoImageSVG from '../../components/NoImageSVG';
 
   const InstrumentList = () => {
     const theme = useTheme();
@@ -13,6 +13,7 @@
     const [showDataGrid, setShowDataGrid] = useState(true);
     const [selectedInstrument, setSelectedInstrument] = useState(null);
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [cloudinaryImageUrls, setCloudinaryImageUrls] = useState([]);
 
     const fetchData = async () => {
       try {
@@ -22,7 +23,6 @@
         }
 
         const data = await response.json();
-
         const instrumentosConId = data.map((instrumento, index) => ({
           ...instrumento,
           id: index + 1,
@@ -38,19 +38,50 @@
       fetchData();
     }, []);
 
-    const handleSubmitInstrument = async (values) => {
+    const handleSubmitInstrument = async (values, actions) => {
       const updatedValues = { ...values };
-      const newImages = values.imagen.filter(image => !selectedInstrument.imagen.some(oldImage => oldImage.url === image.url));
+      const newImages = values.imagen.filter(image => {
+        if (selectedInstrument) {
+          return !selectedInstrument.imagen.some(oldImage => oldImage.url === image.url);
+        }
+        return true;
+      });
+
+
       updatedValues.imagen = newImages;
 
-      const { categoria, ...restValues } = updatedValues;
-      const valuesToSend = { ...restValues, categoria: values.categoria.categoria_id };
+      try {
+        const imageUrls = await Promise.all(updatedValues.imagen.map(async (image) => {
+          if (!image.url.startsWith('http')) {
+            return await handleUploadImage(image.url);
+          }
+          return image.url;
+        }));
 
-      selectedInstrument  ? handleUpdateInstrument(valuesToSend) : handleAddInstrument(valuesToSend);
+        setCloudinaryImageUrls(imageUrls);
 
-      setSelectedInstrument(null);
-      setShowForm(false); 
-      setShowDataGrid(true);
+        const valuesToSend = { ...updatedValues };
+        valuesToSend.imagen = updatedValues.imagen.map((image, index) => ({
+          url: imageUrls[index], 
+          titulo: image.titulo 
+        }));
+
+        valuesToSend.categoria = typeof values.categoria === 'number' ? values.categoria : values.categoria.categoria_id;
+
+        console.log('values--------->' , values);
+        console.log('valuesToSend________________' , valuesToSend);
+
+
+        selectedInstrument  ? handleUpdateInstrument(valuesToSend) : handleAddInstrument(valuesToSend);
+
+        setSelectedInstrument(null);
+        setShowForm(false); 
+        setShowDataGrid(true);
+
+        actions.resetForm();
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
 
     const handleAddInstrument = async (values) => {
@@ -100,24 +131,82 @@
       setShowDataGrid(false);
     };
 
-    const handleDeleteInstrument = () => {
-      // Aquí puedes implementar la lógica de eliminación del instrumento
+  const handleDeleteInstrument = async () => {
+    try {
+      console.log('selectedInstrument--->',selectedInstrument);
+      if (!selectedInstrument) {
+        console.error('No hay instrumento seleccionado para eliminar');
+        return;
+      }
+
+      const response = await fetch(`/instrumentos/eliminar/${selectedInstrument.instrumento_id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar el instrumento');
+      }
+
+      fetchData();
       setConfirmDelete(false);
-    };
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const handleUploadImage = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'ml_default');
+      const response = await fetch('https://api.cloudinary.com/v1_1/djgwbcthz/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al cargar la imagen en Cloudinary');
+      }
+
+      const data = await response.json();
+      return data.secure_url;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };  
+
 
     const columns = [
       { field: 'id', headerName: 'ID', flex: 0.5 },
+      { 
+        field: 'categoria', 
+        headerName: 'Categoría', 
+        flex: 1,
+        valueGetter: (params) => params.row.categoria.nombre
+      },
       { field: 'nombre', headerName: 'Nombre', flex: 1 },
+      { field: 'precio', headerName: 'Precio', flex: 1 }, 
       {
         field: 'imagen',
         headerName: 'Imagen',
         flex: 1,
         renderCell: (params) => (
-          <img
-            src={params.row.imagen.length > 0 ? params.row.imagen[0].url : ''}
-            alt={params.row.nombre}
-            style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-          />
+            <div>
+            {params.row.imagen.length > 0 && (
+              <img
+                src={params.row.imagen.length > 0 ? params.row.imagen[0].url : ''}
+                alt={params.row.nombre}
+                style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+              />
+            )}
+            {params.row.imagen.length === 0 && (
+              <NoImageSVG/>
+            )}
+          </div>
+
+
+
+
         ),
       },
       {
@@ -129,7 +218,7 @@
             <Button onClick={() => handleEditInstrument(params.row)} color="secondary">
               Editar
             </Button>
-            <Button onClick={() => setConfirmDelete(true)} color="error">
+            <Button onClick={() => {setConfirmDelete(true); setSelectedInstrument(params.row);}} color="error">
               Eliminar
             </Button>
           </div>
@@ -162,7 +251,7 @@
         {showForm && (
           <InstrumentForm
             onSubmit={handleSubmitInstrument}
-            initialValues={selectedInstrument}
+            initialValues={selectedInstrument || {}}
             instrumento={selectedInstrument}
             onCancel={() =>{setShowForm(false); setShowDataGrid(true)} }
           />          
@@ -188,7 +277,7 @@
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setConfirmDelete(false)} color="primary">
+            <Button onClick={() => setConfirmDelete(false)} color="secondary">
               Cancelar
             </Button>
             <Button onClick={handleDeleteInstrument} color="error">

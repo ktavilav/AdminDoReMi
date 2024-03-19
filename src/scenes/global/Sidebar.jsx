@@ -7,6 +7,8 @@ import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 
 import PianoIcon from "@mui/icons-material/PianoOutlined";
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
@@ -134,8 +136,17 @@ const Sidebar = () => {
             >
               Instrumentos
             </Typography>
+
             <Item
-              title="Gestionar Instrumentos"
+              title="Categorías"
+              to="/categories"
+              icon={<CategoryOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
+              title="Instrumentos"
               to="/instruments"
               icon={<PianoIcon />}
               selected={selected}
