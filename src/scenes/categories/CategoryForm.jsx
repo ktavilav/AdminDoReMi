@@ -1,11 +1,10 @@
 // CategoryForm.js
 import React, { useState, useEffect } from 'react';
-import { Image } from 'cloudinary-react';
-
 import { Box, Button, TextField, Typography, IconButton } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import useMediaQuery from '@mui/material/useMediaQuery';
+
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Header from '../../components/Header';

@@ -1,12 +1,15 @@
   import React, { useState, useEffect } from 'react';
   import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
   import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-  import InstrumentForm from './InstrumentForm';
   import { useTheme } from '@mui/material';
+  import { tokens } from "../../theme";
+
+  import InstrumentForm from './InstrumentForm';
   import NoImageSVG from '../../components/NoImageSVG';
 
-  const InstrumentList = () => {
+  const InstrumentList = ({ showSnackbar }) => {
     const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
 
     const [instrumentos, setInstrumentos] = useState([]);
     const [showForm, setShowForm] = useState(false);
@@ -30,6 +33,7 @@
 
         setInstrumentos(instrumentosConId);
       } catch (error) {
+        showSnackbar(error.message);
         console.error('Error:', error);
       }
     };
@@ -68,10 +72,6 @@
 
         valuesToSend.categoria = typeof values.categoria === 'number' ? values.categoria : values.categoria.categoria_id;
 
-        console.log('values--------->' , values);
-        console.log('valuesToSend________________' , valuesToSend);
-
-
         selectedInstrument  ? handleUpdateInstrument(valuesToSend) : handleAddInstrument(valuesToSend);
 
         setSelectedInstrument(null);
@@ -80,6 +80,7 @@
 
         actions.resetForm();
       } catch (error) {
+        showSnackbar(error.message);
         console.error('Error:', error);
       }
     }
@@ -97,10 +98,12 @@
         if (!response.ok) {
           throw new Error('Error al agregar el instrumento');
         }
+      showSnackbar('Instrumento creado exitosamente');
 
         fetchData();
         setShowForm(false);
       } catch (error) {
+        showSnackbar(error.message);
         console.error('Error:', error);
       }
     };
@@ -116,11 +119,13 @@
         });
 
         if (!response.ok) {
-          throw new Error('Error al agregar el instrumento');
+          throw new Error('Error al actualizar el instrumento');
         }
+        showSnackbar('Instrumento actualizado exitosamente');
 
         fetchData();
       } catch (error) {
+        showSnackbar(error.message);
         console.error('Error:', error);
       }
     };
@@ -147,9 +152,12 @@
         throw new Error('Error al eliminar el instrumento');
       }
 
+      showSnackbar('Instrumento eliminado exitosamente');
+
       fetchData();
       setConfirmDelete(false);
     } catch (error) {
+      showSnackbar(error.message);
       console.error('Error:', error);
     }
   };
@@ -171,6 +179,7 @@
       const data = await response.json();
       return data.secure_url;
     } catch (error) {
+      showSnackbar(error.message);
       console.error('Error:', error);
     }
   };  
@@ -184,7 +193,7 @@
         flex: 1,
         valueGetter: (params) => params.row.categoria.nombre
       },
-      { field: 'nombre', headerName: 'Nombre', flex: 1 },
+      { field: 'nombre', headerName: 'Nombre', flex: 1, cellClassName: "name-column--cell" },
       { field: 'precio', headerName: 'Precio', flex: 1 }, 
       {
         field: 'imagen',
@@ -242,7 +251,34 @@
               setShowForm(true);
               setShowDataGrid(false);
             }}
-            sx={{ marginBottom: '20px' }}
+            sx={{
+              "& .MuiDataGrid-root": {
+                border: "none",
+              },
+              "& .MuiDataGrid-cell": {
+                borderBottom: "none",
+              },
+              "& .name-column--cell": {
+                color: colors.greenAccent[300],
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: colors.blueAccent[700],
+                borderBottom: "none",
+              },
+              "& .MuiDataGrid-virtualScroller": {
+                backgroundColor: colors.primary[400],
+              },
+              "& .MuiDataGrid-footerContainer": {
+                borderTop: "none",
+                backgroundColor: colors.blueAccent[700],
+              },
+              "& .MuiCheckbox-root": {
+                color: `${colors.greenAccent[200]} !important`,
+              },
+              "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+                color: `${colors.grey[100]} !important`,
+              },
+            }}
           >
             Agregar Instrumento
           </Button>

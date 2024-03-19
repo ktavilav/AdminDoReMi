@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { tokens } from "../../theme";
+import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, useTheme } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import CategoryForm from './CategoryForm';
-import { useTheme } from '@mui/material';
 import NoImageSVG from '../../components/NoImageSVG';
 
-const CategoryList = () => {
+const CategoryList = ({ showSnackbar }) => {
   const theme = useTheme(); 
+  const colors = tokens(theme.palette.mode);
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -15,6 +16,10 @@ const CategoryList = () => {
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [cloudinaryImageUrls, setCloudinaryImageUrls] = useState([]);
+
+  const [confirmationInput, setConfirmationInput] = useState('');
+  const [isConfirmationValid, setIsConfirmationValid] = useState(false);
+
 
   const fetchData = async () => {
     try {
@@ -59,6 +64,7 @@ const CategoryList = () => {
 
         const valuesToSend = { ...updatedValues };
         valuesToSend.imagen = imageUrl;
+
         selectedCategory ? handleUpdateCategory(valuesToSend) : handleAddCategory(valuesToSend);
 
         setSelectedCategory(null);
@@ -67,6 +73,7 @@ const CategoryList = () => {
 
         actions.resetForm();
     } catch (error) {
+        showSnackbar(error.message);
       console.error('Error:', error);
     }
   }
@@ -84,10 +91,12 @@ const CategoryList = () => {
       if (!response.ok) {
         throw new Error('Error al agregar el categoría');
       }
+      showSnackbar('Categoría creada exitosamente');
 
       fetchData();
       setShowForm(false);
     } catch (error) {
+      showSnackbar(error.message);
       console.error('Error:', error);
     }
   };
@@ -103,11 +112,13 @@ const CategoryList = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Error al agregar el categoría');
+        throw new Error('Error al actualizar el categoría');
       }
+      showSnackbar('Categoría actualizada exitosamente');
 
       fetchData();
     } catch (error) {
+      showSnackbar(error.message);
       console.error('Error:', error);
     }
   };
@@ -119,25 +130,36 @@ const CategoryList = () => {
   };
 
   const handleDeleteCategory = async () => {
-    try {
-      if (!selectedCategory) {
-        console.error('No hay categoría seleccionada para eliminar');
-        return;
+    if (confirmationInput === 'Aceptar') {
+      try {
+        if (!selectedCategory) {
+          console.error('No hay categoría seleccionada para eliminar');
+          return;
+        }
+
+        const response = await fetch(`/categoria/eliminar/${selectedCategory.categoria_id}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al eliminar el categoría');
+        }
+        showSnackbar('Categoría eliminada exitosamente');
+
+        fetchData();
+      } catch (error) {
+        showSnackbar(error.message);
+        console.error('Error:', error);
       }
-
-      const response = await fetch(`/categoria/eliminar/${selectedCategory.categoria_id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al eliminar el categoría');
-      }
-
-      fetchData();
       setConfirmDelete(false);
-    } catch (error) {
-      console.error('Error:', error);
     }
+  };  
+
+
+  const handleInputChange = (event) => {
+    const inputValue = event.target.value;
+    setConfirmationInput(inputValue);
+    setIsConfirmationValid(inputValue === 'Aceptar');
   };
 
   const handleUploadImage = async (file) => {
@@ -157,6 +179,7 @@ const CategoryList = () => {
       const data = await response.json();
       return data.secure_url;
     } catch (error) {
+      showSnackbar(error.message);
       console.error('Error:', error);
     }
   };
@@ -207,6 +230,7 @@ const CategoryList = () => {
         <Typography variant="h5" gutterBottom>
           Gestionar Categorías
         </Typography>
+
       {showDataGrid && (
         <Button
           variant="contained"
@@ -241,14 +265,22 @@ const CategoryList = () => {
           getRowId={getRowId}
         />
       )}
-
       {/* Confirmación antes de eliminar */}
       <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
         <DialogTitle>Confirmar Eliminación</DialogTitle>
         <DialogContent>
           <Typography>
-            ¿Estás seguro de que deseas eliminar esta categoría?
+            ¿Estás seguro de que deseas eliminar esta categoría? Esta acción eliminará todos los productos de esta categoría.
           </Typography>
+          <TextField
+            label="Confirmar acción escribiendo 'Aceptar'"
+            fullWidth
+            variant="filled"
+            value={confirmationInput}
+            onChange={handleInputChange}
+            error={!isConfirmationValid}
+            helperText={!isConfirmationValid && 'Por favor, escribe la palabra Aceptar'}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmDelete(false)} color="secondary">
