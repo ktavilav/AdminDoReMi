@@ -14,7 +14,7 @@ const CategoryForm = ({ onSubmit, categoria, onCancel }) => {
     const isNonMobile = useMediaQuery('(min-width:600px)');
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
     const [showImageDialog, setShowImageDialog] = useState(false);
-    const isCreatingNewCategory = !categoria;
+    const isCreatingNewCategory = !categoria; 
 
     const resetFormValues = (setFieldValue) => {
         setFieldValue('imagen', []);

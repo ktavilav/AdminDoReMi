@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material';
 import NoImageSVG from '../../components/NoImageSVG';
 
 const CategoryList = () => {
-  const theme = useTheme();
+  const theme = useTheme(); 
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
