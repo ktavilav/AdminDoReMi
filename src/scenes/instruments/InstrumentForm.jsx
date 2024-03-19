@@ -1,24 +1,102 @@
 // InstrumentForm.js
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Image } from 'cloudinary-react';
+
+import { Box, Button, TextField, Typography, IconButton } from '@mui/material';
 import { Formik, FieldArray } from 'formik';
 import * as yup from 'yup';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Header from '../../components/Header';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { grey } from '@mui/material/colors';
 
-const InstrumentForm = ({ onSubmit, instrumento }) => {
+let categoriasCargadas = false;
+let categoriaSeleccionada = '';
+
+const InstrumentForm = ({ onSubmit, instrumento, onCancel }) => {
   const isNonMobile = useMediaQuery('(min-width:600px)');
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [showImageDialog, setShowImageDialog] = useState(false);
 
-
   const [categories, setCategories] = useState([]);
   const [instrumentDescription, setInstrumentDescription] = useState('');
+  const isCreatingNewInstrument = !instrumento;
+
+  if (instrumento && instrumento.categoria && instrumento.categoria.categoria_id) {
+    categoriaSeleccionada = instrumento.categoria.categoria_id;
+  }  
+  const resetFormValues = (setFieldValue) => {
+    setFieldValue('imagen', []);
+  };
+  useEffect(() => {
+    const storedCategories = localStorage.getItem('categories');
+    
+    if (storedCategories) {
+      setCategories(JSON.parse(storedCategories));
+      categoriasCargadas = true;
+    } else {
+      fetchCategories();
+    }
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/categoria/listar');
+      if (!response.ok) {
+        throw new Error('Error al obtener la lista de categorías');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('categories', JSON.stringify(data));
+      setCategories(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+/*
+Esto va en el form de categoria
+  const createCategory = async (newCategory) => {
+    try {
+      // Lógica para crear una nueva categoría en el backend
+    
+      // Después de crear la categoría, actualizar categorías en localStorage
+      const updatedCategories = [...categories, newCategory];
+      localStorage.setItem('categories', JSON.stringify(updatedCategories));
+      // También es posible que quieras volver a llamar a fetchCategories para asegurarte de tener los datos actualizados
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+// Al crear una nueva categoría en el servidor
+const createCategory = async (newCategory) => {
+  try {
+    const response = await fetch('/categoria/crear', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newCategory),
+    });
+    if (!response.ok) {
+      throw new Error('Error al crear la categoría');
+    }
+
+    // Obtener las categorías actualizadas del servidor
+    fetchCategories();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};  
+*/
+
 
   useEffect(() => {
-    // Obtener la lista de categorías del backend al montar el componente
     const fetchCategories = async () => {
       try {
         const response = await fetch('/categoria/listar');
@@ -28,14 +106,14 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
 
         const data = await response.json();
         setCategories(data);
+        categoriasCargadas = true;
       } catch (error) {
         console.error('Error:', error);
-        // Manejar el error según tus necesidades
       }
     };
 
     fetchCategories();
-  }, []);  
+  }, []);
 
   const openImageDialog = (index) => {
     setSelectedImageIndex(index);
@@ -52,14 +130,21 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
     // Puedes actualizar el estado de Formik aquí si es necesario
   };
 
+  if (!categoriasCargadas) {
+    return <Typography variant="h6">Cargando categorías...</Typography>;
+  }
 
   return (
     <Box m="20px">
       <Header title={`${instrumento ? 'EDITAR' : 'AGREGAR'} INSTRUMENTO`} subtitle={`${instrumento ? 'Editar un' : 'Agregar un nuevo'} Instrumento`} />
 
       <Formik
-        onSubmit={onSubmit}
-        initialValues={instrumento ? { ...instrumento } : initialValues}
+        onSubmit={(values, actions) => {
+          onSubmit(values, actions);
+          resetFormValues(actions.setFieldValue);
+          actions.resetForm();
+        }}
+        initialValues={{ ...initialValues, ...instrumento }}
         validationSchema={instrumentSchema}
       >
         {({
@@ -72,6 +157,15 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
           setFieldValue,
         }) => (
           <form onSubmit={handleSubmit}>
+            <Box display="flex" justifyContent="end" mt="20px">
+              <Button onClick={onCancel} color="secondary">
+                Volver
+              </Button>
+              <Button type="submit" color="secondary" variant="contained">
+                {instrumento ? 'Guardar Cambios' : 'Agregar Instrumento'}
+              </Button>              
+            </Box>
+
             <Box
               display="grid"
               gap="30px"
@@ -80,25 +174,48 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                 "& > div": { gridColumn: isNonMobile ? undefined : 'span 4' },
               }}
             >
+              <FormControl fullWidth sx={{ gridColumn: 'span 4' }}>
+                <Select
+                  fullWidth
+                  variant="filled"
+                  label="Categoría"
+                  onBlur={handleBlur}
+                  onChange={(e) => {
+                    const selectedCategoryId = e.target.value;
+                    handleChange({
+                      target: {
+                        name: 'categoria',
+                        value: selectedCategoryId || '',
+                      }
+                    });
+                  }}
+                  value={values.categoria.categoria_id || values.categoria}
+                  name="categoria"
+                  error={!!touched.categoria && !!errors.categoria}
+                  sx={{ backgroundColor: grey }}
+                >
+                  {categories.map((category) => (
+                    <MenuItem key={category.categoria_id} value={category.categoria_id}>
+                      {category.nombre}
+                    </MenuItem>
+                  ))}
+                </Select>              
+                              
+              </FormControl>
+
               <TextField
-                select
                 fullWidth
                 variant="filled"
-                label="Categoría"
+                type="number"
+                label="Precio"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.category}
-                name="category"
-                error={!!touched.category && !!errors.category}
-                helperText={touched.category && errors.category}
+                value={values.precioDia}
+                name="precioDia"
+                error={!!touched.precioDia && !!errors.precioDia}
+                helperText={touched.precioDia && errors.precioDia}
                 sx={{ gridColumn: 'span 4' }}
-              >
-                {categories.map((category) => (
-                  <option key={category.categoria_id} value={category.categoria_id}>
-                    {category.nombre}
-                  </option>
-                ))}
-              </TextField>
+              />
 
               <TextField
                 fullWidth
@@ -163,28 +280,13 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                             setFieldValue(`imagen[${index}].title`, e.target.value);
                           }}
                           value={image.title}
-                          name={`imagen[${index}].title`}
+                          name={`imagen[${index}].titulo`}
                           error={!!touched.imagen?.[index]?.title && !!errors.imagen?.[index]?.title}
                           helperText={touched.imagen?.[index]?.title && errors.imagen?.[index]?.title}
                         />
-                        <IconButton
-                          color="secondary"
-                          onClick={() => handleRemoveImage(arrayHelpers, index)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
                       </Box>
                     ))}
-                    {values.imagen.length < 5 && (
-                      <Button
-                        type="button"
-                        color="primary"
-                        onClick={() => arrayHelpers.push({ url: '', title: '' })}
-                        startIcon={<PhotoCameraIcon />}
-                      >
-                        Agregar Imagen
-                      </Button>
-                    )}
+                   
                   </div>
                 )}
               </FieldArray>
@@ -205,7 +307,7 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                           style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
                           onClick={() => openImageDialog(index)}
                         />
-                        <IconButton onClick={() => arrayHelpers.remove(index)}>
+                        <IconButton onClick={() => arrayHelpers.remove(index)} color='secondary'>
                           <DeleteIcon />
                         </IconButton>
                       </Box>
@@ -229,8 +331,8 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                           }}
                         />
                         <label htmlFor="image-upload">
-                          <Button component="span" variant="outlined">
-                            <PhotoCameraIcon />
+                          <Button component="span" variant="outlined" color='secondary'>
+                            <PhotoCameraIcon color='secondary'/>
                             Agregar Imagen
                           </Button>
                         </label>
@@ -239,8 +341,8 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                   </Box>
                 )}
               />
+              {/* Muestra las imágenes */}
               <Box>
-                {/* Muestra las imágenes */}
                 {values.imagen &&
                   values.imagen.map((imagen, index) => (
                     <div key={index}>
@@ -249,20 +351,11 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
                         alt={`Imagen ${index + 1}`}
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                       />
-                      {/* Botón para eliminar la imagen */}
-                      <Button onClick={() => handleRemoveImage(index)}>
-                        Eliminar
-                      </Button>
                     </div>
                   ))}
               </Box>
             </Box>
 
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                {instrumento ? 'Guardar Cambios' : 'Agregar Instrumento'}
-              </Button>
-            </Box>
           </form>
         )}
       </Formik>
@@ -293,13 +386,39 @@ const InstrumentForm = ({ onSubmit, instrumento }) => {
 
 const instrumentSchema = yup.object().shape({
   nombre: yup.string().required('El nombre del instrumento es requerido'),
-  imagen: yup.array().max(5, 'No se pueden agregar más de 5 imágenes'),
-  // Otras validaciones según sea necesario
+  precioDia: yup.number().positive('El precio debe ser mayor que cero').required('El precio es requerido'),
+  /*categoria: yup.number().when([], {
+    is: () => categoriasCargadas,
+    then: yup.number().positive('La categoría es requerida'),
+    otherwise: yup.number()
+  }),*/
+  descripcion: yup.string().required('La descripción es requerida'),
+  imagen: yup.array().max(5, 'No se pueden agregar más de 5 imágenes').of(
+    yup.object().shape({
+      url: yup.string().required('La URL de la imagen es requerida'),
+      titulo: yup.string().required('El título de la imagen es requerido')
+    })
+  )
 });
+
 
 const initialValues = {
   nombre: '',
   imagen: [],
+  categoria: categoriaSeleccionada,
+  precioDia: '',
+  descripcion: '',
 };
+
+const getInitialValues = (instrumento) => {
+  return {
+    nombre: instrumento ? instrumento.nombre : '',
+    imagen: instrumento ? instrumento.imagen : [],
+    categoria: categoriaSeleccionada,
+    precioDia: instrumento ? instrumento.precioDia : '',
+    descripcion: instrumento ? instrumento.descripcion : '',
+  };
+};
+
 
 export default InstrumentForm;
