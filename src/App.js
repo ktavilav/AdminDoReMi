@@ -12,6 +12,8 @@ import InstrumentList from "./scenes/instruments/InstrumentList";
 import InstrumentForm from "./scenes/instruments/InstrumentForm";
 import CategoryList from "./scenes/categories/CategoryList";
 import CategoryForm from "./scenes/categories/CategoryForm";
+import UserList from "./scenes/users/UserList";
+import UserForm from "./scenes/users/UserForm";
 import { LoginForm } from "./scenes/authentication/LoginForm";
 
 function App() {
@@ -77,6 +79,8 @@ function App() {
                     <Route path="/instrument/:id" element={<InstrumentForm token={token} />} />
                     <Route path="/categories" element={<CategoryList showSnackbar={showSnackbar} token={token} />} />
                     <Route path="/category/:id" element={<CategoryForm token={token} />} />
+                    <Route path="/users" element={<UserList showSnackbar={showSnackbar} token={token} />} />
+                    <Route path="/user/:id" element={<UserForm token={token} />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
                 </main>
