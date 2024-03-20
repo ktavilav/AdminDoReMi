@@ -7,7 +7,7 @@
   import InstrumentForm from './InstrumentForm';
   import NoImageSVG from '../../components/NoImageSVG';
 
-  const InstrumentList = ({ showSnackbar }) => {
+  const InstrumentList = ({ showSnackbar, token }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -40,10 +40,11 @@
 
     useEffect(() => {
       fetchData();
-    }, []);
+    }, [token]);
 
     const handleSubmitInstrument = async (values, actions) => {
       const updatedValues = { ...values };
+console.log('updatedValues====------->',updatedValues);
       const newImages = values.imagen.filter(image => {
         if (selectedInstrument) {
           return !selectedInstrument.imagen.some(oldImage => oldImage.url === image.url);
@@ -71,7 +72,7 @@
         }));
 
         valuesToSend.categoria = typeof values.categoria === 'number' ? values.categoria : values.categoria.categoria_id;
-
+console.log('valuesToSend====------->',valuesToSend);
         selectedInstrument  ? handleUpdateInstrument(valuesToSend) : handleAddInstrument(valuesToSend);
 
         setSelectedInstrument(null);
@@ -90,6 +91,7 @@
         const response = await fetch('/instrumentos/agregar', {
           method: 'POST',
           headers: {
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(values),
@@ -113,6 +115,7 @@
         const response = await fetch('/instrumentos/modificar', {
           method: 'PUT',
           headers: {
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(values),
@@ -146,6 +149,9 @@
 
       const response = await fetch(`/instrumentos/eliminar/${selectedInstrument.instrumento_id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (!response.ok) {
@@ -212,10 +218,6 @@
               <NoImageSVG/>
             )}
           </div>
-
-
-
-
         ),
       },
       {
@@ -290,6 +292,7 @@
             initialValues={selectedInstrument || {}}
             instrumento={selectedInstrument}
             onCancel={() =>{setShowForm(false); setShowDataGrid(true)} }
+            token={token}
           />          
         )}
 

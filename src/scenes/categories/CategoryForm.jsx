@@ -77,21 +77,21 @@ const createCategory = async (newCategory) => {
 
         <Formik
             onSubmit={(values, actions) => {
-            onSubmit(values, actions);
-            resetFormValues(actions.setFieldValue);
-            actions.resetForm();
+                onSubmit(values, actions);
+                resetFormValues(actions.setFieldValue);
+                actions.resetForm();
             }}
             initialValues={{ ...initialValues, ...categoria }}
             validationSchema={categorySchema}
         >
             {({
-            values,
-            errors,
-            touched,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            setFieldValue,
+                values,
+                errors,
+                touched,
+                handleBlur,
+                handleChange,
+                handleSubmit,
+                setFieldValue,
             }) => (
             <form onSubmit={handleSubmit}>
                 <Box display="flex" justifyContent="end" mt="20px">

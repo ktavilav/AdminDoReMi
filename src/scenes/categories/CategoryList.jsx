@@ -4,8 +4,9 @@ import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActi
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import CategoryForm from './CategoryForm';
 import NoImageSVG from '../../components/NoImageSVG';
+import { Token } from '@mui/icons-material';
 
-const CategoryList = ({ showSnackbar }) => {
+const CategoryList = ({ showSnackbar, token }) => {
   const theme = useTheme(); 
   const colors = tokens(theme.palette.mode);
 
@@ -23,7 +24,13 @@ const CategoryList = ({ showSnackbar }) => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('/categoria/listar');
+      console.log('token---->',token);
+      const response = await fetch('/categoria/listar', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }      
+      );
       if (!response.ok) {
         throw new Error('Error al obtener la lista de categorías');
       }
@@ -42,7 +49,7 @@ const CategoryList = ({ showSnackbar }) => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleSubmitCategory = async (values, actions) => {
     const updatedValues = { ...values };
@@ -83,6 +90,7 @@ const CategoryList = ({ showSnackbar }) => {
       const response = await fetch('/categoria/agregar', {
         method: 'POST',
         headers: {
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(values),
@@ -106,6 +114,7 @@ const CategoryList = ({ showSnackbar }) => {
       const response = await fetch('/categoria/modificar', {
         method: 'PUT',
         headers: {
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(values),
@@ -139,6 +148,9 @@ const CategoryList = ({ showSnackbar }) => {
 
         const response = await fetch(`/categoria/eliminar/${selectedCategory.categoria_id}`, {
           method: 'DELETE',
+          headers: {
+              'Authorization': `Bearer ${token}`
+          }
         });
 
         if (!response.ok) {

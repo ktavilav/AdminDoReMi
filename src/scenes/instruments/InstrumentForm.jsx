@@ -17,7 +17,7 @@ import { grey } from '@mui/material/colors';
 let categoriasCargadas = false;
 let categoriaSeleccionada = '';
 
-const InstrumentForm = ({ onSubmit, instrumento, onCancel }) => {
+const InstrumentForm = ({ onSubmit, instrumento, onCancel, token }) => {
   const isNonMobile = useMediaQuery('(min-width:600px)');
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [showImageDialog, setShowImageDialog] = useState(false);
@@ -45,7 +45,12 @@ const InstrumentForm = ({ onSubmit, instrumento, onCancel }) => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('/categoria/listar');
+      const response = await fetch('/categoria/listar', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }      
+      );
       if (!response.ok) {
         throw new Error('Error al obtener la lista de categorías');
       }

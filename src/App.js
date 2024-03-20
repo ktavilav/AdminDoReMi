@@ -12,6 +12,7 @@ import InstrumentList from "./scenes/instruments/InstrumentList";
 import InstrumentForm from "./scenes/instruments/InstrumentForm";
 import CategoryList from "./scenes/categories/CategoryList";
 import CategoryForm from "./scenes/categories/CategoryForm";
+import { LoginForm } from "./scenes/authentication/LoginForm";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -20,6 +21,21 @@ function App() {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState('');
+
+  const handleLogin = (token) => {
+    if(token){
+      setIsLoggedIn(true);
+      setToken(token);
+    }
+  };
+
+  const handleLogout = () => {
+    console.log('ENGREEEE');
+    setIsLoggedIn(false);
+    setToken('');
+  };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -50,25 +66,31 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <div className="app">
-            <Sidebar isSidebar={isSidebar} />
-            <main className="content">
-              <Topbar setIsSidebar={setIsSidebar} />
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/instruments" element={<InstrumentList showSnackbar={showSnackbar}/>} />
-                <Route path="/instrument/:id" element={<InstrumentForm />} />
-                <Route path="/categories" element={<CategoryList showSnackbar={showSnackbar}/>} />
-                <Route path="/category/:id" element={<CategoryForm />} />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </main>
+            {isLoggedIn ? (
+              <>
+                <Sidebar isSidebar={isSidebar} />
+                <main className="content">
+                  <Topbar setIsSidebar={setIsSidebar} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/instruments" element={<InstrumentList showSnackbar={showSnackbar} token={token} />} />
+                    <Route path="/instrument/:id" element={<InstrumentForm token={token} />} />
+                    <Route path="/categories" element={<CategoryList showSnackbar={showSnackbar} token={token} />} />
+                    <Route path="/category/:id" element={<CategoryForm token={token} />} />
+                    <Route path="*" element={<Navigate to="/" />} />
+                  </Routes>
+                </main>
+              </>
+            ) : (
+              <LoginForm onLogin={handleLogin}/>
+            )}
             <Snackbar
               anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
               open={snackbarOpen && !!snackbarMessage}
               autoHideDuration={4000}
               onClose={handleSnackbarClose}
               message={snackbarMessage}
-            />            
+            />
           </div>
         </ThemeProvider>        
       )}
