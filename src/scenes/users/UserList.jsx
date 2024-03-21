@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { tokens } from "../../theme";
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, useTheme } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import CategoryForm from './CategoryForm';
+import UserForm from './UserForm';
 import NoImageSVG from '../../components/NoImageSVG';
 import { Token } from '@mui/icons-material';
 
-const CategoryList = ({ showSnackbar, token }) => {
+const UserList = ({ showSnackbar, token }) => {
   const theme = useTheme(); 
   const colors = tokens(theme.palette.mode);
 
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showDataGrid, setShowDataGrid] = useState(true);
 
@@ -25,23 +25,23 @@ const CategoryList = ({ showSnackbar, token }) => {
   const fetchData = async () => {
     try {
       console.log('token---->',token);
-      const response = await fetch('/categoria/listar', {
+      const response = await fetch('/usuario/listar', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }      
       );
       if (!response.ok) {
-        throw new Error('Error al obtener la lista de categorías');
+        throw new Error('Error al obtener la lista de usuarios');
       }
 
       const data = await response.json();
-      const categoriaConId = data.map((categoria, index) => ({
-        ...categoria,
+      const userConId = data.map((user, index) => ({
+        ...user,
         id: index + 1,
       }));
 
-      setCategories(categoriaConId);
+      setUsers(userConId);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -51,9 +51,9 @@ const CategoryList = ({ showSnackbar, token }) => {
     fetchData();
   }, [token]);
 
-  const handleSubmitCategory = async (values, actions) => {
+  const handleSubmitUser = async (values, actions) => {
     const updatedValues = { ...values };
-    const newImage = selectedCategory && !selectedCategory.imagen ? null : values.imagen;
+    const newImage = selectedUser && !selectedUser.imagen ? null : values.imagen;
 
     try {
       let imageUrl = '';
@@ -72,9 +72,9 @@ const CategoryList = ({ showSnackbar, token }) => {
         const valuesToSend = { ...updatedValues };
         valuesToSend.imagen = imageUrl;
 
-        selectedCategory ? handleUpdateCategory(valuesToSend) : handleAddCategory(valuesToSend);
+        selectedUser ? handleUpdateUser(valuesToSend) : handleAddUser(valuesToSend);
 
-        setSelectedCategory(null);
+        setSelectedUser(null);
         setShowForm(false);
         setShowDataGrid(true);
 
@@ -85,9 +85,9 @@ const CategoryList = ({ showSnackbar, token }) => {
     }
   }
 
-  const handleAddCategory = async (values) => {
+  const handleAddUser = async (values) => {
     try {
-      const response = await fetch('/categoria/agregar', {
+      const response = await fetch('/usuario/agregar', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -97,9 +97,9 @@ const CategoryList = ({ showSnackbar, token }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Error al agregar el categoría');
+        throw new Error('Error al agregar el USUARIO');
       }
-      showSnackbar('Categoría creada exitosamente');
+      showSnackbar('Usuario creado exitosamente');
 
       fetchData();
       setShowForm(false);
@@ -109,9 +109,9 @@ const CategoryList = ({ showSnackbar, token }) => {
     }
   };
 
-  const handleUpdateCategory = async (values) => {
+  const handleUpdateUser = async (values) => {
     try {
-      const response = await fetch('/categoria/modificar', {
+      const response = await fetch('/usuario/modificar', {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -121,9 +121,9 @@ const CategoryList = ({ showSnackbar, token }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Error al actualizar el categoría');
+        throw new Error('Error al actualizar el usuario');
       }
-      showSnackbar('Categoría actualizada exitosamente');
+      showSnackbar('Usuario actualizado exitosamente');
 
       fetchData();
     } catch (error) {
@@ -132,21 +132,21 @@ const CategoryList = ({ showSnackbar, token }) => {
     }
   };
 
-  const handleEditCategory = (categoria) => {
-    setSelectedCategory(categoria);
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
     setShowDataGrid(false);
     setShowForm(true);
   };
 
-  const handleDeleteCategory = async () => {
+  const handleDeleteUser = async () => {
     if (confirmationInput === 'Aceptar') {
       try {
-        if (!selectedCategory) {
-          console.error('No hay categoría seleccionada para eliminar');
+        if (!selectedUser) {
+          console.error('No hay usuario seleccionado para eliminar');
           return;
         }
 
-        const response = await fetch(`/categoria/eliminar/${selectedCategory.categoria_id}`, {
+        const response = await fetch(`/usuario/eliminar/${selectedUser.id}`, {
           method: 'DELETE',
           headers: {
               'Authorization': `Bearer ${token}`
@@ -154,9 +154,9 @@ const CategoryList = ({ showSnackbar, token }) => {
         });
 
         if (!response.ok) {
-          throw new Error('Error al eliminar el categoría');
+          throw new Error('Error al eliminar el usuario');
         }
-        showSnackbar('Categoría eliminada exitosamente');
+        showSnackbar('usuario eliminado exitosamente');
 
         fetchData();
       } catch (error) {
@@ -198,21 +198,24 @@ const CategoryList = ({ showSnackbar, token }) => {
 
   const columns = [
     { field: 'id', headerName: 'ID', flex: 0.5 },
+    { field: 'username', headerName: 'Username', flex: 1 },
     { field: 'nombre', headerName: 'Nombre', flex: 1 },
+    { field: 'apellido', headerName: 'Apellido', flex: 1 },
+    { field: 'role', headerName: 'Role', flex: 1 },
     {
-      field: 'imagen',
-      headerName: 'Imagen',
+      field: 'avatar',
+      headerName: 'avatar',
       flex: 1,
       renderCell: (params) => (
           <div>
-          {params.row.imagen.length > 0 && (
+          {params.row.avatar.length > 0 && (
             <img
-                src={params.row.imagen.length > 0 ? params.row.imagen : ''}
+                src={params.row.avatar.length > 0 ? params.row.avatar : ''}
                 alt={params.row.nombre}
                 style={{ width: '50px', height: '50px', objectFit: 'cover' }}
             />
           )}
-          {params.row.imagen.length === 0 && (
+          {params.row.avatar.length === 0 && (
             <NoImageSVG/>
           )}
         </div>
@@ -224,10 +227,10 @@ const CategoryList = ({ showSnackbar, token }) => {
       flex: 1,
       renderCell: (params) => (
         <div>
-          <Button onClick={() => {handleEditCategory(params.row)}} color="secondary">
+          <Button onClick={() => {handleEditUser(params.row)}} color="secondary">
             Editar
           </Button>
-          <Button onClick={() => {setConfirmDelete(true); setSelectedCategory(params.row);}} color="error">
+          <Button onClick={() => {setConfirmDelete(true); setSelectedUser(params.row);}} color="error">
             Eliminar
           </Button>
         </div>
@@ -240,7 +243,7 @@ const CategoryList = ({ showSnackbar, token }) => {
   return (
     <Box m="20px" height="500px">
         <Typography variant="h5" gutterBottom>
-          Gestionar Categorías
+          Gestionar Usuarios
         </Typography>
 
       {showDataGrid && (
@@ -248,28 +251,28 @@ const CategoryList = ({ showSnackbar, token }) => {
           variant="contained"
           color="secondary"
           onClick={() => {
-            setSelectedCategory(null);
+            setSelectedUser(null);
             setShowForm(true);
             setShowDataGrid(false);
           }}
           sx={{ marginBottom: '20px' }}
         >
-          Agregar Categoría
+          Agregar Usuario
         </Button>
       )}
 
       {showForm && (
-        <CategoryForm
-          onSubmit={handleSubmitCategory}
-          initialValues={selectedCategory || {}}
-          categoria={selectedCategory}
+        <UserForm
+          onSubmit={handleSubmitUser}
+          initialValues={selectedUser || {}}
+          user={selectedUser}
           onCancel={() =>{setShowForm(false); setShowDataGrid(true)} }
         />          
       )}
 
       {showDataGrid && (
         <DataGrid
-          rows={categories}
+          rows={users}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
           pageSize={5}
@@ -282,7 +285,7 @@ const CategoryList = ({ showSnackbar, token }) => {
         <DialogTitle>Confirmar Eliminación</DialogTitle>
         <DialogContent>
           <Typography>
-            ¿Estás seguro de que deseas eliminar esta categoría? Esta acción eliminará todos los productos de esta categoría.
+            ¿Estás seguro de que deseas eliminar este usuario? Esta acción eliminará todos los productos de esta categoría.
           </Typography>
           <TextField
             label="Confirmar acción escribiendo 'Aceptar'"
@@ -298,7 +301,7 @@ const CategoryList = ({ showSnackbar, token }) => {
           <Button onClick={() => setConfirmDelete(false)} color="secondary">
             Cancelar
           </Button>
-          <Button onClick={handleDeleteCategory} color="error">
+          <Button onClick={handleDeleteUser} color="error">
             Eliminar
           </Button>
         </DialogActions>
@@ -307,4 +310,4 @@ const CategoryList = ({ showSnackbar, token }) => {
   );
 };
 
-export default CategoryList;
+export default UserList;

@@ -1,11 +1,10 @@
 // CategoryForm.js
 import React, { useState, useEffect } from 'react';
-import { Image } from 'cloudinary-react';
-
 import { Box, Button, TextField, Typography, IconButton } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import useMediaQuery from '@mui/material/useMediaQuery';
+
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Header from '../../components/Header';
@@ -78,21 +77,21 @@ const createCategory = async (newCategory) => {
 
         <Formik
             onSubmit={(values, actions) => {
-            onSubmit(values, actions);
-            resetFormValues(actions.setFieldValue);
-            actions.resetForm();
+                onSubmit(values, actions);
+                resetFormValues(actions.setFieldValue);
+                actions.resetForm();
             }}
             initialValues={{ ...initialValues, ...categoria }}
             validationSchema={categorySchema}
         >
             {({
-            values,
-            errors,
-            touched,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            setFieldValue,
+                values,
+                errors,
+                touched,
+                handleBlur,
+                handleChange,
+                handleSubmit,
+                setFieldValue,
             }) => (
             <form onSubmit={handleSubmit}>
                 <Box display="flex" justifyContent="end" mt="20px">
