@@ -107,6 +107,6 @@ const LoginForm = ({ onLogin }) => {
       </Box>
     </Container>
   );
-};
+}; 
 
 export { LoginForm };
