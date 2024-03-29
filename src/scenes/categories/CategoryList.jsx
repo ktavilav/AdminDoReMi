@@ -5,6 +5,8 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import CategoryForm from './CategoryForm';
 import NoImageSVG from '../../components/NoImageSVG';
 import { Token } from '@mui/icons-material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const CategoryList = ({ showSnackbar, token }) => {
   const theme = useTheme(); 
@@ -224,13 +226,11 @@ const CategoryList = ({ showSnackbar, token }) => {
       flex: 1,
       renderCell: (params) => (
         <div>
-          <Button onClick={() => {handleEditCategory(params.row)}} color="secondary">
-            Editar
-          </Button>
-          <Button onClick={() => {setConfirmDelete(true); setSelectedCategory(params.row);}} color="error">
-            Eliminar
-          </Button>
-        </div>
+        <Button onClick={() => {handleEditCategory(params.row)}} color="secondary" startIcon={<EditIcon />}>
+        </Button>
+        <Button onClick={() => {setConfirmDelete(true); setSelectedCategory(params.row);}} color="error" startIcon={<DeleteIcon />}>
+        </Button>
+      </div>
       ),
     },
   ];
