@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Image } from 'cloudinary-react';
 
-import { Box, Button, TextField, Typography, IconButton } from '@mui/material';
+import { Box, Button, TextField, Typography, IconButton, InputLabel } from '@mui/material';
 import { Formik, FieldArray } from 'formik';
 import * as yup from 'yup';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -13,6 +13,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { grey } from '@mui/material/colors';
+import { CardFooter } from 'react-bootstrap';
 
 let categoriasCargadas = false;
 let categoriaSeleccionada = '';
@@ -180,10 +181,12 @@ const createCategory = async (newCategory) => {
               }}
             >
               <FormControl fullWidth sx={{ gridColumn: 'span 4' }}>
+                <InputLabel id="categoria-label" style={{ marginTop: '15px' }}>Categoría</InputLabel>
                 <Select
                   fullWidth
                   variant="filled"
                   label="Categoría"
+                  placeholder='Categoría'
                   onBlur={handleBlur}
                   onChange={(e) => {
                     const selectedCategoryId = e.target.value;
@@ -198,13 +201,16 @@ const createCategory = async (newCategory) => {
                   name="categoria"
                   error={!!touched.categoria && !!errors.categoria}
                   sx={{ backgroundColor: grey }}
+                  inputProps={{
+                    placeholder: 'Categoría',
+                  }}
                 >
                   {categories.map((category) => (
                     <MenuItem key={category.categoria_id} value={category.categoria_id}>
                       {category.nombre}
                     </MenuItem>
                   ))}
-                </Select>              
+                </Select>
                               
               </FormControl>
 

@@ -26,6 +26,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
 
+  
   const handleLogin = (token) => {
     if(token){
       setIsLoggedIn(true);
@@ -52,6 +53,7 @@ function App() {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
+    setIsLoggedIn(true);
 
     window.addEventListener('resize', handleResize);
 
