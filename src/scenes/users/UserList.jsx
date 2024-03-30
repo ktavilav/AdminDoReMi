@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { tokens } from "../../theme";
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, useTheme } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import UserForm from './UserForm';
-import NoImageSVG from '../../components/NoImageSVG';
-import { Token } from '@mui/icons-material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const UserList = ({ showSnackbar, token }) => {
-  const theme = useTheme(); 
-  const colors = tokens(theme.palette.mode);
 
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -16,7 +13,6 @@ const UserList = ({ showSnackbar, token }) => {
   const [showDataGrid, setShowDataGrid] = useState(true);
 
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [cloudinaryImageUrls, setCloudinaryImageUrls] = useState([]);
 
   const [confirmationInput, setConfirmationInput] = useState('');
   const [isConfirmationValid, setIsConfirmationValid] = useState(false);
@@ -52,27 +48,9 @@ const UserList = ({ showSnackbar, token }) => {
   }, [token]);
 
   const handleSubmitUser = async (values, actions) => {
-    const updatedValues = { ...values };
-    const newImage = selectedUser && !selectedUser.imagen ? null : values.imagen;
-
+    console.log('INSIDE');
     try {
-      let imageUrl = '';
-
-        if (newImage && !newImage.startsWith('http')) {
-          console.log('INSIDE', newImage);
-            imageUrl = await handleUploadImage(newImage);
-        } else if (newImage) {
-            imageUrl = newImage;
-        }
-
-        if (imageUrl) {
-            setCloudinaryImageUrls([imageUrl]);
-        }
-
-        const valuesToSend = { ...updatedValues };
-        valuesToSend.imagen = imageUrl;
-
-        selectedUser ? handleUpdateUser(valuesToSend) : handleAddUser(valuesToSend);
+        selectedUser ? handleUpdateUser(values) : handleAddUser(values);
 
         setSelectedUser(null);
         setShowForm(false);
@@ -111,7 +89,7 @@ const UserList = ({ showSnackbar, token }) => {
 
   const handleUpdateUser = async (values) => {
     try {
-      const response = await fetch('/usuario/modificar', {
+      const response = await fetch('/usuario/cambioRole', {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -174,28 +152,6 @@ const UserList = ({ showSnackbar, token }) => {
     setIsConfirmationValid(inputValue === 'Aceptar');
   };
 
-  const handleUploadImage = async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', 'ml_default');
-      const response = await fetch('https://api.cloudinary.com/v1_1/djgwbcthz/image/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al cargar la imagen en Cloudinary');
-      }
-
-      const data = await response.json();
-      return data.secure_url;
-    } catch (error) {
-      showSnackbar(error.message);
-      console.error('Error:', error);
-    }
-  };
-
   const columns = [
     { field: 'id', headerName: 'ID', flex: 0.5 },
     { field: 'username', headerName: 'Username', flex: 1 },
@@ -203,35 +159,14 @@ const UserList = ({ showSnackbar, token }) => {
     { field: 'apellido', headerName: 'Apellido', flex: 1 },
     { field: 'role', headerName: 'Role', flex: 1 },
     {
-      field: 'avatar',
-      headerName: 'avatar',
-      flex: 1,
-      renderCell: (params) => (
-          <div>
-          {params.row.avatar.length > 0 && (
-            <img
-                src={params.row.avatar.length > 0 ? params.row.avatar : ''}
-                alt={params.row.nombre}
-                style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-            />
-          )}
-          {params.row.avatar.length === 0 && (
-            <NoImageSVG/>
-          )}
-        </div>
-      ),
-    },
-    {
       field: 'acciones',
       headerName: 'Acciones',
       flex: 1,
       renderCell: (params) => (
         <div>
-          <Button onClick={() => {handleEditUser(params.row)}} color="secondary">
-            Editar
+          <Button onClick={() => {handleEditUser(params.row)}} color="secondary" startIcon={<EditIcon />}>
           </Button>
-          <Button onClick={() => {setConfirmDelete(true); setSelectedUser(params.row);}} color="error">
-            Eliminar
+          <Button onClick={() => {setConfirmDelete(true); setSelectedUser(params.row);}} color="error" startIcon={<DeleteIcon />}>
           </Button>
         </div>
       ),

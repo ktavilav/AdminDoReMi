@@ -22,7 +22,13 @@
 
     const fetchData = async () => {
       try {
-        const response = await fetch('/instrumentos/listar');
+        console.log('token---->',token);
+        const response = await fetch('/instrumentos/listar', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }      
+        );
         if (!response.ok) {
           throw new Error('Error al obtener la lista de instrumentos');
         }
