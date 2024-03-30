@@ -21,7 +21,7 @@ body,
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #e0e0e0;
+  background: #523c3c;
 }
 
 /* Handle */
@@ -33,3 +33,60 @@ body,
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.css-yrdy0g-MuiDataGrid-columnHeaderRow,
+.MuiDataGrid-footerContainer,
+.MuiTablePagination-selectLabel,
+.MuiToolbar-root,
+.MuiButtonBase-root,
+.Mui-disabled
+{
+  background-color: #512DA8;
+  color: #ffc107;
+}
+
+.MuiIconButton-root
+,.MuiSvgIcon-root
+
+,.MuiSvgIcon-root 
+,.MuiSvgIcon-fontSizeMedium 
+,.MuiSelect-icon 
+,.MuiTablePagination-selectIcon 
+,.MuiSelect-iconStandard 
+,.css-oatl8s-MuiSvgIcon-root-MuiSelect-icon
+{
+  color: #856f0c;
+}
+
+
+/* Cambiar color de la sección Columns */
+.MuiDataGrid-toolbarContainer button[aria-label="Select columns"] {
+  color: #ffc107 !important; /* Cambia el color a tu preferencia */
+}
+
+/* Cambiar color de la sección Filters */
+.MuiDataGrid-toolbarContainer button[aria-label="Show filters"] {
+  color: #ffc107 !important; /* Cambia el color a tu preferencia */
+}
+
+/* Cambiar color de la sección Density */
+.MuiDataGrid-toolbarContainer button[aria-label="Density"] {
+  color: #ffc107 !important; /* Cambia el color a tu preferencia */
+}
+
+/* Cambiar color de la sección Export */
+.MuiDataGrid-toolbarContainer button[aria-label="Export"] {
+  color: #ffc107 !important; /* Cambia el color a tu preferencia */
+}
+
+
+
+.MuiFormLabel-root{
+  color: #be9007 !important; /* Cambia el color a tu preferencia */
+
+}
+
+.MuiDataGrid-toolbarContainer, .css-1xn3edc{
+  background-color: #512DA8;
+
+}
+
