@@ -35,6 +35,7 @@ const LoginForm = ({ onLogin }) => {
         },
         body: JSON.stringify(formData),
       });
+      console.log('response----->',response);
       if (!response.ok) {
         throw new Error('Error al iniciar sesión');
       }

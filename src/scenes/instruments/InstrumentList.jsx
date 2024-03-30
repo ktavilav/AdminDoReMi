@@ -6,6 +6,8 @@
 
   import InstrumentForm from './InstrumentForm';
   import NoImageSVG from '../../components/NoImageSVG';
+  import EditIcon from '@mui/icons-material/Edit';
+  import DeleteIcon from '@mui/icons-material/Delete';
 
   const InstrumentList = ({ showSnackbar, token }) => {
     const theme = useTheme();
@@ -20,7 +22,13 @@
 
     const fetchData = async () => {
       try {
-        const response = await fetch('/instrumentos/listar');
+        console.log('token---->',token);
+        const response = await fetch('/instrumentos/listar', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }      
+        );
         if (!response.ok) {
           throw new Error('Error al obtener la lista de instrumentos');
         }
@@ -226,11 +234,9 @@ console.log('valuesToSend====------->',valuesToSend);
         flex: 1,
         renderCell: (params) => (
           <div>
-            <Button onClick={() => handleEditInstrument(params.row)} color="secondary">
-              Editar
+            <Button onClick={() => {handleEditInstrument(params.row)}} color="secondary" startIcon={<EditIcon />}>
             </Button>
-            <Button onClick={() => {setConfirmDelete(true); setSelectedInstrument(params.row);}} color="error">
-              Eliminar
+            <Button onClick={() => {setConfirmDelete(true); setSelectedInstrument(params.row);}} color="error" startIcon={<DeleteIcon />}>
             </Button>
           </div>
         ),

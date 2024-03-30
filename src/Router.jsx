@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import { CloudinaryContext } from 'cloudinary-react';
@@ -16,7 +17,9 @@ import UserList from "./scenes/users/UserList";
 import UserForm from "./scenes/users/UserForm";
 import { LoginForm } from "./scenes/authentication/LoginForm";
 
-function App() {
+import Layout from './Layout';
+
+const AppRouter = () => {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -75,6 +78,7 @@ function App() {
                 <Sidebar isSidebar={isSidebar} />
                 <main className="content">
                   <Topbar setIsSidebar={setIsSidebar} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+                  <Layout>
                   <Routes>
                     <Route path="/admin" element={<Dashboard />} />
                     <Route path="/admin/instruments" element={<InstrumentList showSnackbar={showSnackbar} token={token} />} />
@@ -83,8 +87,9 @@ function App() {
                     <Route path="/admin/category/:id" element={<CategoryForm token={token} />} />
                     <Route path="/admin/users" element={<UserList showSnackbar={showSnackbar} token={token} />} />
                     <Route path="/admin/user/:id" element={<UserForm token={token} />} />
-                    <Route path="*" element={<Navigate to="/admin" />} />
+                    <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
+                  </Layout>
                 </main>
               </>
             ) : (
@@ -106,11 +111,11 @@ function App() {
   ReactDOM.render(
     <React.StrictMode>
       <CloudinaryContext cloudName="djgwbcthz">
-        <App />
+        <AppRouter />
       </CloudinaryContext>
     </React.StrictMode>,
     document.getElementById('root')
   );
 }
 
-export default App;
+export default AppRouter;

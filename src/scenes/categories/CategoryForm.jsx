@@ -125,6 +125,22 @@ const createCategory = async (newCategory) => {
                         sx={{ gridColumn: 'span 4' }}
                     />
 
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={4} 
+                        variant="filled"
+                        type="text"
+                        label="Descripción de la categoría" 
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.descripcion}
+                        name="descripcion"
+                        error={!!touched.descripcion && !!errors.descripcion}
+                        helperText={touched.descripcion && errors.descripcion}
+                        sx={{ gridColumn: 'span 4' }} 
+                    />
+                    
                         <div>
                             <Typography variant="h6" gutterBottom>
                             Imágen de la Categoría
@@ -154,6 +170,8 @@ const createCategory = async (newCategory) => {
                             Imágenes de la Categoría
                             </Typography>
                             <Box  display="flex" alignItems="center" mb="10px">
+                                {values.imagen ? (
+                                <>
                                 <img
                                     src={values.imagen}
                                     alt='Imagen'
@@ -163,6 +181,10 @@ const createCategory = async (newCategory) => {
                                 <IconButton color='secondary'>
                                 <DeleteIcon />
                                 </IconButton>
+                                </>
+                                ) : (
+                                    <></>
+                                )}
                             </Box>
                             <Box>
                                 <input
@@ -234,11 +256,14 @@ const createCategory = async (newCategory) => {
 const categorySchema = yup.object().shape({
     nombre: yup.string().required('El nombre del categoria es requerido'),
     imagen: yup.string().required('La URL de la imagen es requerida'),
+    descripcion: yup.string().required('La descripción es requerida').max(1000, 'La descripción debe tener como máximo 1000 caracteres')
+
 });
 
 const initialValues = {
     nombre: '',
     imagen: '',
+    descripcion: '', 
 };
 
 const getInitialValues = (categoria) => {
