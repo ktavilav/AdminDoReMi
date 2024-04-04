@@ -9,7 +9,7 @@ import './css/Footer.css';
 function Profile() {
   const [profileData, setProfileData] = useState(null);
   const [userReservations, setUserReservations] = useState([]);
-  const favorites = JSON.parse(localStorage.getItem('favorites'));
+  const [userFavorites, setUserFavorites] = useState([]); 
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -45,6 +45,22 @@ function Profile() {
     fetchUserReservations();
   }, []);
 
+  const fetchUserFavorites = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+
+      const favorites = JSON.parse(localStorage.getItem(`favorites_${userId}`)) || [];
+      setUserFavorites(favorites);
+    } catch (error) {
+      console.error('Error al obtener los favoritos del usuario:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserFavorites();
+  }, []);
+
+
   const handleViewInstrumentClick = (instrumentoId) => {
     window.location.href = `/product/${instrumentoId}`;
   };
@@ -68,8 +84,8 @@ function Profile() {
       <h2>Mis favoritos</h2>
       <div className="favorites-carousel">
         <Carousel showArrows={true}>
-          {Object.values(favorites).map(product => (
-            <div key={product.instrumento_id}>
+          {Object.values(userFavorites).map(product => (
+            <div key={product.instrumento_id} style={{ cursor: 'pointer' }} onClick={() => handleViewInstrumentClick(product.instrumento_id)}>
               <img src={product.imagen[0].url} alt={product.nombre}
               
               style={{ 

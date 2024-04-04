@@ -46,14 +46,13 @@ const ProductDetail = () => {
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite); 
-
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+    const favorites = JSON.parse(localStorage.getItem(`favorites_${userId}`)) || {};
     if (isFavorite) {
       delete favorites[id];
     } else {
       favorites[id] = selectedProduct;
     }
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+    localStorage.setItem(`favorites_${userId}`, JSON.stringify(favorites));
   };
 
   useEffect(() => {
@@ -101,7 +100,7 @@ const ProductDetail = () => {
   }, [id]);
 
   useEffect(() => {
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+    const favorites = JSON.parse(localStorage.getItem(`favorites_${userId}`)) || {};
     setIsFavorite(!!favorites[id]);
   }, [id]);
 
@@ -167,7 +166,7 @@ const ProductDetail = () => {
       <div className="">
         <div className="product-container">
           <div className="product-images">
-            <div className="image-wrapper">
+            <div className="image-wrapper" style={{ cursor: 'pointer' }} >
               <img
                 src={selectedProduct.imagen[selectedThumbnail].url}
                 alt={`Producto ${selectedProduct.id} Imagen principal`}
