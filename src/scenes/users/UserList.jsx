@@ -48,7 +48,7 @@ const UserList = ({ showSnackbar, token }) => {
   }, [token]);
 
   const handleSubmitUser = async (values, actions) => {
-    console.log('INSIDE');
+    console.log('INSIDEs');
     try {
         selectedUser ? handleUpdateUser(values) : handleAddUser(values);
 

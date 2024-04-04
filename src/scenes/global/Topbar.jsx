@@ -1,5 +1,6 @@
 import { Box, IconButton, useTheme,  Button} from "@mui/material";
-import { useContext } from "react";
+import React, { useContext, useState, useEffect } from 'react';
+
 import { ColorModeContext, tokens } from "../../theme";
 import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -15,9 +16,37 @@ const Topbar = ({ isLoggedIn, onLogout }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
+  const [userName, setUserName] = useState('');
+
   const handleLogout = () => {
-    onLogout(); 
+    const confirmLogout = window.confirm('¿Estás seguro de que quieres cerrar sesión?');
+    if (confirmLogout) {
+      onLogout(); 
+    }
   };
+
+  const getUserName = () => {
+    return userName || ''; 
+  };
+
+  const fetchUserName = async () => {
+    try {
+      const response = await fetch(`/usuario/buscarPorId/${localStorage.getItem('userId')}`);
+      if (!response.ok) {
+        throw new Error('Error al obtener los datos del usuario');
+      }
+      const userData = await response.json();
+      setUserName(`${userData.nombre} ${userData.apellido}`);
+    } catch (error) {
+      console.error('Error al obtener los datos del usuario:', error);
+    }
+  };  
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchUserName();
+    }
+  }, [isLoggedIn]);
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
@@ -35,6 +64,9 @@ const Topbar = ({ isLoggedIn, onLogout }) => {
 
       {/* ICONS */}
       <Box display="flex">
+
+        <PersonOutlinedIcon /><span>Bienvenida {getUserName()}</span>
+
         <IconButton onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === "dark" ? (
             <DarkModeOutlinedIcon />
