@@ -1,0 +1,24 @@
+.body-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .cancelation-image {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .cancelation-title {
+    font-weight: bold;
+    color: #F44336;
+    margin-bottom: 10px;
+  }
+  
+  .cancelation-message {
+    font-size: 18px;
+    line-height: 1.5;
+  }

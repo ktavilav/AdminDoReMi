@@ -1,0 +1,33 @@
+.body-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .confirmation-image {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .confirmation-title {
+    font-weight: bold;
+    color: #4CAF50;
+    margin-bottom: 10px;
+  }
+  
+  .confirmation-message {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .product-container {
+    position: relative;
+  }
+  
+  .ver-mas-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
