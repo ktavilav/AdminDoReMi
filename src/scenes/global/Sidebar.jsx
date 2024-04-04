@@ -9,6 +9,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PianoIcon from "@mui/icons-material/PianoOutlined";
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import PersonIcon from '@mui/icons-material/Person';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
@@ -165,6 +166,22 @@ const Sidebar = () => {
               title="Instrumentos"
               to="/admin/instruments"
               icon={<PianoIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 20px" }}
+            >
+              Website
+            </Typography>
+
+            <Item
+              title="Tienda"
+              to="/"
+              icon={<StorefrontOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

@@ -1,0 +1,104 @@
+/* ReservationDetail.css */
+
+.tarjeta {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta h2 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.producto-info, .cliente-info {
+  margin-bottom: 20px;
+}
+
+.botones-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.confirmar-btn, .cancelar-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.confirmar-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.cancelar-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.producto-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cliente-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-item {
+  margin-bottom: 10px;
+}
+
+.info-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+/* ReservationDetail.css */
+
+.info-item {
+  margin-bottom: 5px;
+  line-height: 0;
+}
+
+.info-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.producto-info,
+.cliente-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.producto-info {
+  margin-right: 10px; 
+}
+
+.cliente-info {
+  margin-left: 10px; 
+}
+
+p{
+  font-size: 12px; 
+}
+strong{
+  color:peru;
+}
