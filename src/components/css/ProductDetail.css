@@ -1,0 +1,161 @@
+
+.productDetail-header {
+  display: flex;
+  justify-content: space-between;
+  max-width: 100%;
+  flex-direction: row;
+  font-size: 30px;
+  text-align: center;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #512DA8;
+}
+
+.productDetail-header-title-left {
+  padding: 10px;
+  flex: 1;
+  text-align: left;
+
+}
+
+.productDetail-header-title-left > h1 {
+  font-size: 20px;
+  color: #ffff;
+  
+}
+
+.productDetail-header-right {
+  padding: 10px;
+  flex: 2;
+  text-align: right;
+  width: 70%;
+  background: #512DA8;
+}
+
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.product-images {
+  flex: 1;
+  overflow-x: scroll;
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-details {
+  flex: 0.5;
+  padding: 20px;
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 10px; /* Añadido: Borde redondeado */
+  margin-left: 20px; /* Añadido: Separación entre imágenes y detalles */
+
+}
+
+
+
+
+.product-image {
+  max-width: 100%;
+  height: auto;
+}
+
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 14px;
+  line-height: 2;
+}
+
+
+.product-container {
+  display: flex;
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
+
+.main-image {
+  width: 90%; 
+  height: auto;
+  margin-bottom: 10px;
+  aspect-ratio: 3/2;
+  object-fit: contain;
+}
+
+.product-thumbnail {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  aspect-ratio: 3/2;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.thumbnail-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-thumbnail.selected {
+  border: 2px solid #E4A951; 
+  border-radius: 10px;
+}
+
+.product-details {
+  position: relative;
+}
+
+.product-details span {
+  position: absolute; 
+  top: 0; 
+  right: 0;
+  transform: translate(-30%, 30%); 
+}
+
+/* Estilos adicionales para hacerlo más responsive */
+@media (max-width: 890px) {
+  .product-images,
+  .thumbnail-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .thumbnail-container {
+    justify-content: flex-start;
+  }
+
+  .main-image,
+  .product-thumbnail {
+    width: 100%;
+  }
+}
+
+.confirmar-btn {
+  background-color: #6a5acd; /* Púrpura */
+  color: #fff;
+  margin-right: 10px;
+}
+
+.confirmar-btn:hover, .cancelar-btn:hover {
+  background-color: #483d8b; /* Púrpura oscuro al hacer hover */
+}
+
+.image-wrapper {
+  width: 70%; 
+  position: relative;
+  display: inline-block;
+}
+
+.ver-mas-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}

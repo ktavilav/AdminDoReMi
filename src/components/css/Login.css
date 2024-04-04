@@ -1,0 +1,97 @@
+.container {
+    display: flex;
+    height: 100vh;
+  }
+  
+
+  .left-section {
+    flex: 1;
+    background-image: url('https://i.imgur.com/TGM4d3w.jpeg');
+    background-size: cover;
+    color: white;
+    padding: 20px;
+    height: 1060px;
+    margin-top: -100px;
+    margin-left: -140px;
+  }
+
+  .title-left {
+    font-size: 74px;
+    text-align: center;
+    padding-left: 10px;
+    margin-top: 20px;
+ }
+
+ .logo-section {
+    width: 420px;
+    height: 86px;
+    padding-top: 200px;
+    padding-left: 120px;
+    margin-top: 20px;
+    
+
+ }
+  
+ .right-section {
+    flex: 1;
+    background-color:#512DA8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 1060px;
+    margin-top: -100px;
+    margin-right: -160px;
+    padding: 20px;
+  }
+
+  .form-login {
+    background-color: white;
+    padding: 100px;
+    border-radius: 10px;
+    width: 350px;
+    height: 350px;
+    margin-left: 20px;
+    margin-top: 80px;
+    margin-right: 35px;
+}
+
+  
+  .input-group {
+    margin-bottom: 20px;
+  }
+  
+  .input-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .input-group input {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  button:active {
+    background-color: #45a049;
+  }
+
+  .recordatorio{
+    color: #45a049;
+    font-size: 15px;
+  }
+  

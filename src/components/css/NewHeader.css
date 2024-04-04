@@ -1,0 +1,35 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: white;
+  }
+  
+  .logo img {
+    width: 100px;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-info span {
+    margin-right: 10px;
+  }
+  
+  .user-info button {
+    margin-left: 5px;
+    margin-right: 25px; /* Aumenta el margen derecho para separar el botón de cerrar sesión */
+  }
+  
+  .user-info .avatar {
+    margin-right: 20px;
+    margin-left: 5px;
+  }
+  
+  .profile {
+    margin-right: 40px; /* Ajusta el margen derecho para separar Mi perfil del botón de cerrar sesión */
+  }
+  
