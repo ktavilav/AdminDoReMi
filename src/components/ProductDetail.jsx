@@ -15,7 +15,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { isLogged } = useAuth();
+  const { isLogged, userRole } = useAuth();
 
   const [userId, setUserID] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
