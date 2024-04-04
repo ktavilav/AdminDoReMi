@@ -30,9 +30,7 @@ function Login() {
       });
   
       if (response.ok) {
-        login();
         const data = await response.json();
-        localStorage.setItem('token', data.token);
 
         const userResponse = await fetch(`/usuario/buscarPorUsername/${username}`, {
           headers: {
@@ -40,16 +38,14 @@ function Login() {
           }
         });
         const userData = await userResponse.json();
+        localStorage.setItem('userId', userData.usuario_id);
         
+        login({ token: data.token, userId: userData.usuario_id });
         if (userData.role === 'USER') {
           console.log('Inicio de sesión exitoso como usuario');
-          localStorage.setItem('userId', userData.usuario_id);
-          login();
           navigate('/');
         } else if (userData.role === 'ADMIN') {
           console.log('Inicio de sesión exitoso como administrador');
-          localStorage.setItem('userId', userData.usuario_id);
-          login();
           navigate('/admin');
         }
       } else {
